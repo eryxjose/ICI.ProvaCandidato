@@ -75,7 +75,7 @@
                                 });
                                 return result + tags.join(', ');
                             }
-                            return '';
+                            return result;
                         }
                     }
                 ],
@@ -124,6 +124,7 @@
                             callback: function () {
                                 var noticiaId = $(button).attr('data-noticia-id');
                                 var selectedTagId = $("#dropdown").val();
+                                var selectedTagText = $("#dropdown").text();
                                 
                                 $.ajax({
                                     type: 'POST',
@@ -133,12 +134,10 @@
                                         tagId: selectedTagId
                                     },
                                     success: function (result) {
-                                        var selectedTagText = $(select).find('option:selected').text();
-
+                                        debugger;
                                         var newRow = $('<tr><td>' + selectedTagText + '</td></tr>');
+                                        var tagsTable = $('#tagsTable_' + noticiaId);
                                         tagsTable.append(newRow);
-
-                                        $(select).val("--Selecione uma Tag--");
                                     },
                                     error: function (error) {
                                         console.error('Erro ao adicionar a tag à notícia.');
