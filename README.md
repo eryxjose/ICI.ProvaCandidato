@@ -3,6 +3,7 @@
 
 OBSERVAÇÕES:
 
+* A branch cqrs_camada_negocio possui a implementação do serviço na camada de aplicação mas não vou tempo de finalizar tudo.
 * Optei por não alterar a estrutura principal do projeto mas recomendo que seja criado um projeto específico para entidades do domínio independente do projeto Dados (Persistencia).
 * Optei por utilizar sqlite inicialmente para simplificar a entrega da versão inicial. Instale um cliente sqlite para visualizar a base de dados.
   * Instale o [Cliente SQLiteBrowser](https://sqlitebrowser.org/dl/)
@@ -12,6 +13,9 @@ OBSERVAÇÕES:
 * Optei por não alterar o tipo do identificador 'Id' mas recomendo que seja alterado para string para reduzir a dependência entre frontend e backend ao permitir a criação de identificadores do tipo Guid no frontend.
 * No meu entendimento, a estrutura fornecida objetiva verificar meus conhecimentos relacionados ao uso da tecnologia Razor para o frontend em uma aplicação asp.net mvc.
 * Recomendo adotar o padrão BEM (Block Element Modifier) para estilização da aplicação.
+* Utilize o comando abaixo para atualizar a base de dados se necessário
+
+	dotnet ef database update InitialCreate -p ICI.ProvaCandidato.Dados/ -s ICI.ProvaCandidato.Web/
 
 ATIVIDADES:
 
