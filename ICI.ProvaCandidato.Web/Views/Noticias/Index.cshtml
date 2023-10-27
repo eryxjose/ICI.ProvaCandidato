@@ -9,7 +9,6 @@
     <thead>
         <tr>
             <th></th>
-            <th>Id</th>
             <th>Título</th>
             <th>Texto</th>
             <th>Usuário</th>
@@ -19,68 +18,22 @@
     <tbody></tbody>
 </table>
 
-
-@* 
-<table id="noticiasTable" class="table table-bordered table-hover">
-    <thead>
-        <tr>
-            <th></th>
-            <th>Título</th>
-            <th>Texto</th>
-            <th>Usuário</th>
-            <th>Tags</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Noticias)
-        {
-            <tr data-noticia-id="@item.Id">
-                <td class="col-1">
-                    <ol class="action-toolbar">
-                        <li>
-                            <a href="/noticias/edit/@item.Id" title="Editar" class="btn">
-                                <i class="fas fa-pencil-alt"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" title="Excluir" class="js-delete" data-noticia-id="@item.Id">
-                                <i class="fas fa-trash-alt"></i>
-                            </a>
-                        </li>
-                    </ol>
-                </td>
-                <td>@item.Titulo</td>
-                <td>@item.Texto</td>
-                <td>@item.Usuario.Nome</td>
-                <td>
-                    <select class="tagsSelect" data-noticia-id="@item.Id" name="tagsSelect">
-                        <option>--Selecione uma Tag--</option>
-                        @foreach (var tag in Model.Tags)
-                        {
-                            <option value="@tag.Id">@tag.Descricao</option>
-                        }
-                    </select>
-                    <table id="tagsTable_@item.Id">
-                        @foreach (var tag in item.TagsNoticia)
-                        {
-                            <tr>
-                                <td>@tag.Tag.Descricao</td>
-                            </tr>
-                        }
-                    </table>
-                    
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
- *@
-
 @section scripts 
 {
     <script>
+        
+        var tagsArray = '';
 
         $(document).ready(function() {
+
+            $.ajax({
+                url: "/api/tags/",
+                method: "GET",
+                success: function (res) {
+                    debugger;
+                    tagsArray = res;
+                }
+            })
 
             $('#noticiasTable').DataTable({
                 ajax: {
@@ -107,7 +60,6 @@
                             `;
                         }
                     },
-                    { data: 'id' },
                     { data: 'titulo' },
                     { data: 'texto' },
                     { data: 'usuario.nome' },
@@ -115,17 +67,22 @@
                         data: 'tagsNoticia',
                         render: function (data, type, row) {
                             debugger;
+                            var result = `<a href="#" title="Tags" class='tagSelect openModalBtn' data-noticia-id='${row.id}'> + </a>&nbsp;`;
+
                             if (type === 'display' && data && data.length > 0) {
                                 var tags = data.map(function (tag) {
-                                    debugger;
                                     return tag.descricao;
                                 });
-                                return tags.join(', ');
+                                return result + tags.join(', ');
                             }
                             return '';
                         }
                     }
-                ]
+                ],
+                "columnDefs": [
+                    { "orderable": false, "targets": 0 }
+                ],
+                order: [[1, 'desc']],
             });
 
             $("#noticiasTable").on("click", ".js-delete", function () {
@@ -145,6 +102,56 @@
                     }
                 });
 
+            });
+
+            $("#noticiasTable").on("click", ".openModalBtn", function () {
+                var button = this;
+                // HTML para o dropdownlist
+                var dropdownHTML = '<select id="dropdown" class="form-control">';
+                tagsArray.forEach(function (option) {
+                    dropdownHTML += '<option value="' + option.id + '">' + option.descricao + '</option>';
+                });
+                dropdownHTML += '</select>';
+
+                // Criação do modal Bootbox com o dropdownlist
+                bootbox.dialog({
+                    title: "Selecione uma opção",
+                    message: dropdownHTML,
+                    buttons: {
+                        confirm: {
+                            label: "OK",
+                            className: "btn-primary",
+                            callback: function () {
+                                var noticiaId = $(button).attr('data-noticia-id');
+                                var selectedTagId = $("#dropdown").val();
+                                
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/Noticias/AdicionarTag',
+                                    data: {
+                                        noticiaId: noticiaId,
+                                        tagId: selectedTagId
+                                    },
+                                    success: function (result) {
+                                        var selectedTagText = $(select).find('option:selected').text();
+
+                                        var newRow = $('<tr><td>' + selectedTagText + '</td></tr>');
+                                        tagsTable.append(newRow);
+
+                                        $(select).val("--Selecione uma Tag--");
+                                    },
+                                    error: function (error) {
+                                        console.error('Erro ao adicionar a tag à notícia.');
+                                    }
+                                });
+                            }
+                        },
+                        cancel: {
+                            label: "Cancelar",
+                            className: "btn-secondary"
+                        }
+                    }
+                });
             });
 
             $('.tagsSelect').on('change', function () {
