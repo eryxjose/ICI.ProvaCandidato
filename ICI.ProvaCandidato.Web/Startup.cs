@@ -1,4 +1,7 @@
 using ICI.ProvaCandidato.Dados;
+using ICI.ProvaCandidato.Negocio.Core;
+using ICI.ProvaCandidato.Negocio.Noticias;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -47,6 +50,9 @@ namespace ICI.ProvaCandidato.Web
                 options.SupportedCultures = new[] { ptBrCulture };
                 options.SupportedUICultures = new[] { ptBrCulture };
             });
+
+            services.AddMediatR(typeof(List.Handler).Assembly);
+			services.AddAutoMapper(typeof(MappingProfiles).Assembly);
         }
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

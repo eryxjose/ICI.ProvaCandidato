@@ -9,6 +9,22 @@
     <thead>
         <tr>
             <th></th>
+            <th>Id</th>
+            <th>Título</th>
+            <th>Texto</th>
+            <th>Usuário</th>
+            <th>Tags</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+
+@* 
+<table id="noticiasTable" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th></th>
             <th>Título</th>
             <th>Texto</th>
             <th>Usuário</th>
@@ -58,7 +74,7 @@
         }
     </tbody>
 </table>
-
+ *@
 
 @section scripts 
 {
@@ -66,11 +82,50 @@
 
         $(document).ready(function() {
 
-            $("#noticiasTable").DataTable({
-                "columnDefs": [
-                    { "orderable": false, "targets": 0 }
-                ],
-                order: [[1, 'desc']], // coluna de ordenação inicial na segunda coluna
+            $('#noticiasTable').DataTable({
+                ajax: {
+                    url: '/api/noticias', // URL para buscar os dados
+                    dataSrc: '', // A fonte dos dados é o array no topo do JSON
+                },
+                columns: [
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `
+                                <ol class="action-toolbar">
+                                    <li>
+                                        <a href="/noticias/edit/${row.id}" title="Editar" class="btn">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" title="Excluir" class="js-delete" data-noticia-id="${row.id}">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </li>
+                                </ol>
+                            `;
+                        }
+                    },
+                    { data: 'id' },
+                    { data: 'titulo' },
+                    { data: 'texto' },
+                    { data: 'usuario.nome' },
+                    {
+                        data: 'tagsNoticia',
+                        render: function (data, type, row) {
+                            debugger;
+                            if (type === 'display' && data && data.length > 0) {
+                                var tags = data.map(function (tag) {
+                                    debugger;
+                                    return tag.descricao;
+                                });
+                                return tags.join(', ');
+                            }
+                            return '';
+                        }
+                    }
+                ]
             });
 
             $("#noticiasTable").on("click", ".js-delete", function () {

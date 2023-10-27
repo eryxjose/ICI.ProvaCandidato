@@ -24,4 +24,5 @@ REFERÊNCIAS:
 
 * [jQuery DataTable](https://datatables.net/)
 * [Bootbox](https://bootboxjs.com/)
-* 
+* [fontawesome](https://fontawesome.com/icons)
+

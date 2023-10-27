@@ -17,15 +17,16 @@ namespace ICI.ProvaCandidato.Web.Controllers
 
         public IActionResult Index()
         {
-            var noticias = _dataContext.Noticias.Include(o => o.Usuario).Include(o => o.TagsNoticia);
-            var tags = _dataContext.Tags.ToList();
-            var viewmodel = new NoticiasViewModel
-            {
-                Noticias = noticias,
-                Tags = tags
-            };
+            return View();
+            //var noticias = _dataContext.Noticias.Include(o => o.Usuario).Include(o => o.TagsNoticia);
+            //var tags = _dataContext.Tags.ToList();
+            //var viewmodel = new NoticiasViewModel
+            //{
+            //    Noticias = noticias,
+            //    Tags = tags
+            //};
 
-            return View(viewmodel);
+            //return View(viewmodel);
         }
 
         public IActionResult Form()
