@@ -124,8 +124,9 @@
                             callback: function () {
                                 var noticiaId = $(button).attr('data-noticia-id');
                                 var selectedTagId = $("#dropdown").val();
-                                var selectedTagText = $("#dropdown").text();
-                                
+                                var selectedTagText = $("#dropdown option:selected").text();
+
+                                debugger;
                                 $.ajax({
                                     type: 'POST',
                                     url: '/Noticias/AdicionarTag',
@@ -135,9 +136,9 @@
                                     },
                                     success: function (result) {
                                         debugger;
-                                        var newRow = $('<tr><td>' + selectedTagText + '</td></tr>');
-                                        var tagsTable = $('#tagsTable_' + noticiaId);
-                                        tagsTable.append(newRow);
+                                        var linha = $(button).parents("tr");
+                                        var ultimaColuna = linha.find("td:last");
+                                        ultimaColuna.append(selectedTagText + ', ');
                                     },
                                     error: function (error) {
                                         console.error('Erro ao adicionar a tag à notícia.');
