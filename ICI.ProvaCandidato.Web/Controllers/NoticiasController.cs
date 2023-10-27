@@ -104,6 +104,9 @@ namespace ICI.ProvaCandidato.Web.Controllers
 
         public IActionResult AdicionarTag(int noticiaId, int tagId)
         {
+            if (_dataContext.NoticiasTags.Any(o => o.NoticiaId == noticiaId && o.TagId == tagId))
+                return BadRequest("A tag já está adicionada a esta notícia.");
+
             var tagNoticia = new NoticiaTag
             {
                 NoticiaId = noticiaId,

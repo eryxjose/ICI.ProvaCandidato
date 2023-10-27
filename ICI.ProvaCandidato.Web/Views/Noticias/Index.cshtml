@@ -141,7 +141,11 @@
                                         ultimaColuna.append(selectedTagText + ', ');
                                     },
                                     error: function (error) {
-                                        console.error('Erro ao adicionar a tag à notícia.');
+                                        console.error(error.responseText);
+                                        bootbox.dialog({
+                                            title: "Erro",
+                                            message: error.responseText
+                                        });
                                     }
                                 });
                             }
